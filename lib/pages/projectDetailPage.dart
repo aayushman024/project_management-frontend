@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:auto_animated/auto_animated.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,8 @@ import 'package:project_management_system/pages/editPage.dart';
 import '../components/customAppDrawer.dart';
 import '../components/featureBox.dart';
 import '../globals.dart';
+import 'loginPage.dart';
+import 'myTeamPage.dart';
 
 class ProjectDetail extends StatefulWidget {
   const ProjectDetail({super.key});
@@ -70,15 +73,19 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                  child: Text(
-                    'Innovation & Performance, Plot-25, GGN, IN',
-                    style: GoogleFonts.lato(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                  ),
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                    child: TextButton(
+                      onPressed: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> MyTeamPage()));
+                      },
+                      child: Text(
+                        'Innovation & Performance, Plot-25, GGN, IN',
+                        style: GoogleFonts.lato(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                        ),
+                      ),)
                 ),
               ),
             ),
@@ -90,7 +97,9 @@ class _ProjectDetailState extends State<ProjectDetail> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginPage()));
+                  },
                   icon: Icon(
                     Icons.logout_rounded,
                     size: screenHeight * 0.025,
@@ -178,9 +187,22 @@ class _ProjectDetailState extends State<ProjectDetail> {
                             //SizedBox(height: screenHeight*0.05,),
                             SizedBox(
                               height: screenHeight * 0.6,
-                              child: ListView.builder(
+                              child: LiveList(
+                                showItemInterval: Duration(milliseconds: 50),
+                                showItemDuration: Duration(milliseconds: 500),
+                                reAnimateOnVisibility: true,
+                                scrollDirection: Axis.vertical,
                                 itemCount: 10,
-                                itemBuilder: (context, index) => FeatureBox(index: 10-index,),
+                                itemBuilder: (context, index, animation) => FadeTransition(
+                                  opacity: animation,
+                                  child: SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: Offset(0, 0),
+                                      end: Offset(0, 0),
+                                    ).animate(animation),
+                                    child: FeatureBox(index: 10 - index),
+                                  ),
+                                ),
                               ),
                             ),
                             OutlinedButton(
@@ -223,9 +245,22 @@ class _ProjectDetailState extends State<ProjectDetail> {
                               ),),
                             SizedBox(
                               height: screenHeight * 0.6,
-                              child: ListView.builder(
-                                itemCount: 6,
-                                itemBuilder: (context, index) => BugsBox(index: 6-index,),
+                              child: LiveList(
+                                showItemInterval: Duration(milliseconds: 50),
+                                showItemDuration: Duration(milliseconds: 500),
+                                reAnimateOnVisibility: true,
+                                scrollDirection: Axis.vertical,
+                                itemCount: 10,
+                                itemBuilder: (context, index, animation) => FadeTransition(
+                                  opacity: animation,
+                                  child: SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: Offset(0, 0),
+                                      end: Offset(0, 0),
+                                    ).animate(animation),
+                                    child: BugsBox(index: 10 - index),
+                                  ),
+                                ),
                               ),
                             ),
                             OutlinedButton(

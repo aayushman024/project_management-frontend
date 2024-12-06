@@ -47,14 +47,31 @@ class _BugsBoxState extends State<BugsBox> {
                       ),
                       SizedBox(width: 5),
                       if (isResolved)
-                        Icon(Icons.check_circle, color: Colors.green, size: 20), // Green tick if resolved
+                        Icon(Icons.check_circle, color: Colors.green, size: 20),
                     ],
                   ),
                   PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'Resolve') {
                         setState(() {
-                          isResolved = true; // Mark as resolved when selected
+                          isResolved = true;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              margin: EdgeInsets.symmetric(vertical: 50, horizontal: 500),
+                              showCloseIcon: true,
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              content: Text('Bug marked as resolved',
+                                style: GoogleFonts.lato(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 4),
+                            ),
+                          );
                         });
                       }
                     },

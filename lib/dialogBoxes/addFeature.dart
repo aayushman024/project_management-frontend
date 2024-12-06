@@ -36,7 +36,23 @@ class _AddFeatureState extends State<AddFeature> {
         ),
         TextButton(
           onPressed: () {
-            // Add your action here
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                margin: EdgeInsets.symmetric(vertical: 50, horizontal: 500),
+                showCloseIcon: true,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                content: Text('Feature request added',
+                  style: GoogleFonts.lato(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 4),
+              ),
+            );
             Navigator.of(context).pop();
           },
           child: Text('Add',

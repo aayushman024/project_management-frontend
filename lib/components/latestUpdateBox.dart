@@ -14,36 +14,33 @@ class LatestUpdate extends StatefulWidget {
 class _LatestUpdateState extends State<LatestUpdate> {
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    
+
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 25),
+      margin: EdgeInsets.symmetric(vertical: 40),
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 25),
-      width: screenWidth*0.4,
-      decoration: BoxDecoration(
-        color: Color(0xffDFECFF),
-            borderRadius: BorderRadius.circular(10)
-      ),
+      width: screenWidth * 0.4,
+      decoration: BoxDecoration(color: Color(0xffDFECFF), borderRadius: BorderRadius.circular(10)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Latest Update',
-          style: GoogleFonts.lato(
-            color: Colors.black,
-            fontWeight: FontWeight.w800,
-            fontSize: 18
-          ),),
+          ListTile(
+            leading: Text(
+              'Latest Update',
+              style: GoogleFonts.lato(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w800),
+            ),
+            trailing: Text(
+              '(12/11/2024)',
+              style: GoogleFonts.lato(color: Colors.black38, fontSize: 14, fontWeight: FontWeight.w500),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 15, bottom: 15),
-            child: Text('Frontend development has been completed, integration '
-                'with backend is in progress, feature #09 has been implemented',
-              style: GoogleFonts.lato(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 13
-              ),),
+            child: Text(
+              'Frontend development has been completed, integration '
+              'with backend is in progress, feature #09 has been implemented',
+              style: GoogleFonts.lato(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13),
+            ),
           ),
           TextButton(
             onPressed: () {

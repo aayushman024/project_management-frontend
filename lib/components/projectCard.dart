@@ -47,7 +47,7 @@ class _ProjectCardState extends State<ProjectCard> {
           });
         },
         child: Padding(
-          padding: const EdgeInsets.only(top: 35),
+          padding: const EdgeInsets.only(top: 15),
           child: AnimatedScale(
             scale: _isHovered ? 1.04 : 1.0,
             duration: Duration(milliseconds: 200),

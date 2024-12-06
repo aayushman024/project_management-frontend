@@ -55,7 +55,7 @@ class _CustomTimelineState extends State<CustomTimeline> {
             child: TimelineTile(
               endChild: Padding(
                 padding: const EdgeInsets.only(top: 5),
-                child: Text('Design\n(12/11/24)',
+                child: Text('Design\n(26/11/24)',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: Colors.black54,
@@ -80,7 +80,7 @@ class _CustomTimelineState extends State<CustomTimeline> {
             child: TimelineTile(
               startChild: Padding(
                 padding: const EdgeInsets.only(top: 5),
-                child: Text('Development\n(12/11/24)',
+                child: Text('Development\n(02/01/25)',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: Colors.black54,
@@ -105,7 +105,7 @@ class _CustomTimelineState extends State<CustomTimeline> {
             child: TimelineTile(
               endChild: Padding(
                 padding: const EdgeInsets.only(top: 5),
-                child: Text('Testing\n(12/11/24)',
+                child: Text('Testing\n(26/01/25)',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: Colors.black54,
@@ -129,7 +129,7 @@ class _CustomTimelineState extends State<CustomTimeline> {
             child: TimelineTile(
               startChild: Padding(
                 padding: const EdgeInsets.only(top: 0),
-                child: Text('Release\n(12/11/24)',
+                child: Text('Release\n(01/02/25)',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                       color: Colors.black54,

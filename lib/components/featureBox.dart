@@ -13,12 +13,11 @@ class FeatureBox extends StatefulWidget {
 }
 
 class _FeatureBoxState extends State<FeatureBox> {
-  bool isResolved = false; // To track the resolved state
+  bool isResolved = false;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 15),
@@ -53,11 +52,31 @@ class _FeatureBoxState extends State<FeatureBox> {
                     ],
                   ),
                   PopupMenuButton<String>(
+                    color: Colors.white,
                     onSelected: (value) {
                       if (value == 'Added') {
                         setState(() {
-                          isResolved = true; // Mark as resolved when selected
+                          isResolved = true;
                         });
+
+                        // Show Material Banner
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            margin: EdgeInsets.symmetric(vertical: 50, horizontal: 500),
+                            showCloseIcon: true,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              content: Text('Feature marked as added',
+                              style: GoogleFonts.lato(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                              ),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 4),
+                          ),
+                        );
                       }
                     },
                     itemBuilder: (context) => [
@@ -66,8 +85,7 @@ class _FeatureBoxState extends State<FeatureBox> {
                         child: Text('Mark as Added'),
                       ),
                     ],
-                    icon: Icon(Icons.more_vert, color: Colors.black, size: 20,),
-                  ),
+                  )
                 ],
               ),
               SizedBox(height: 10),

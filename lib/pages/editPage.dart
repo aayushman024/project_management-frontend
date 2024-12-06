@@ -2,12 +2,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+import 'package:project_management_system/pages/projectDetailPage.dart';
 
 import '../components/customAppDrawer.dart';
 import '../components/customTextField.dart';
 import '../components/selectableButtons.dart';
 import '../controllers/controllers.dart';
 import '../globals.dart';
+import 'loginPage.dart';
+import 'myTeamPage.dart';
 
 class EditPage extends StatefulWidget {
   const EditPage({super.key});
@@ -22,6 +26,34 @@ class _EditPageState extends State<EditPage> {
   String? selectedPriority;
   String? selectedLeader;
   String? selectedWeekDay;
+  String? currentMilestone;
+
+  void projectEditedSuccessfully(){
+    showDialog(context: context, builder: (context)=> AlertDialog(
+      backgroundColor: Colors.white,
+      title: Padding(
+        padding: const EdgeInsets.all(12),
+        child: SizedBox(
+          height: 80,
+          child: Lottie.asset('/completedAnimation.json',
+            ),
+        ),
+      ),
+      content:  Text('Project Edited Successfully!',
+        style: GoogleFonts.lato(
+          color: Colors.black,
+          fontWeight: FontWeight.w600,
+          fontSize: 18,
+        ),),),
+    );
+    Future.delayed(
+      Duration(seconds: 2),
+          () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ProjectDetail()),
+      ),
+    );
+  }
 
   Widget build(BuildContext context) {
 
@@ -50,15 +82,19 @@ class _EditPageState extends State<EditPage> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                child: Text(
-                  'Innovation & Performance, Plot-25, GGN, IN',
-                  style: GoogleFonts.lato(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                  ),
-                ),
+                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  child: TextButton(
+                    onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> MyTeamPage()));
+                    },
+                    child: Text(
+                      'Innovation & Performance, Plot-25, GGN, IN',
+                      style: GoogleFonts.lato(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),)
               ),
             ),
           ),
@@ -70,7 +106,9 @@ class _EditPageState extends State<EditPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginPage()));
+                },
                 icon: Icon(
                   Icons.logout_rounded,
                   size: screenHeight * 0.025,
@@ -94,11 +132,60 @@ class _EditPageState extends State<EditPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomTextField(
+                          controller: latestUpdateController,
+                          labelText: 'Enter Latest Update'),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 40),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              borderRadius: BorderRadius.circular(10),
+                              focusColor: Colors.transparent,
+                              hint: Text(
+                                'Update Timeline Milestone',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              value: currentMilestone,
+                              items: milestones
+                                  .map((item) => DropdownMenuItem(
+                                value: item,
+                                child: Text(
+                                  item,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              )).toList(),
+
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                 currentMilestone = newValue;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black,
+                              ),
+                              dropdownColor: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      CustomTextField(
                           controller: projectNameController,
-                          labelText: 'Project Name'),
+                          labelText: 'Edit Project Name'),
                       CustomTextField(
                           controller: aboutProjectController,
-                          labelText: 'About the Project'),
+                          labelText: 'Edit About the Project'),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -109,12 +196,12 @@ class _EditPageState extends State<EditPage> {
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   focusColor: Colors.transparent,
                                   hint: Text(
-                                    'Priority',
+                                    'Change Priority',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
@@ -154,12 +241,12 @@ class _EditPageState extends State<EditPage> {
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   focusColor: Colors.transparent,
                                   hint: Text(
-                                    'Led By',
+                                    'Change Led By',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
@@ -199,12 +286,12 @@ class _EditPageState extends State<EditPage> {
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                              padding: EdgeInsets.symmetric(horizontal: 20),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   focusColor: Colors.transparent,
                                   hint: Text(
-                                    'Weekly Review',
+                                    'Edit Weekly Review',
                                     style: TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
@@ -251,7 +338,7 @@ class _EditPageState extends State<EditPage> {
                                 decoration: InputDecoration(
                                   focusColor: Colors.grey,
                                   suffixIcon: Icon(Icons.calendar_month),
-                                  hintText: 'Enter Research Deadline',
+                                  hintText: 'Edit Research Deadline',
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                                 ),
                                 onTap: () async {
@@ -291,7 +378,7 @@ class _EditPageState extends State<EditPage> {
                             child: CustomTextField(
                                 controller: researchEffortsController,
                                 suffixIcon: Icon(Icons.percent_rounded),
-                                labelText: 'Research Efforts'),
+                                labelText: 'Edit Research Efforts'),
                           )
                         ],
                       ),
@@ -306,7 +393,7 @@ class _EditPageState extends State<EditPage> {
                                 decoration: InputDecoration(
                                   focusColor: Colors.grey,
                                   suffixIcon: Icon(Icons.calendar_month),
-                                  hintText: 'Enter Design Deadline',
+                                  hintText: 'Edit Design Deadline',
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                                 ),
                                 onTap: () async {
@@ -346,7 +433,7 @@ class _EditPageState extends State<EditPage> {
                             child: CustomTextField(
                                 controller: designEffortsController,
                                 suffixIcon: Icon(Icons.percent_rounded),
-                                labelText: 'Design Efforts'),
+                                labelText: 'Edit Design Efforts'),
                           )
                         ],
                       ),
@@ -361,7 +448,7 @@ class _EditPageState extends State<EditPage> {
                                 decoration: InputDecoration(
                                   focusColor: Colors.grey,
                                   suffixIcon: Icon(Icons.calendar_month),
-                                  hintText: 'Enter Development Deadline',
+                                  hintText: 'Edit Development Deadline',
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                                 ),
                                 onTap: () async {
@@ -401,7 +488,7 @@ class _EditPageState extends State<EditPage> {
                             child: CustomTextField(
                                 controller: developmentEffortsController,
                                 suffixIcon: Icon(Icons.percent_rounded),
-                                labelText: 'Development Efforts'),
+                                labelText: 'Edit Development Efforts'),
                           )
                         ],
                       ),
@@ -416,7 +503,7 @@ class _EditPageState extends State<EditPage> {
                                 decoration: InputDecoration(
                                   focusColor: Colors.grey,
                                   suffixIcon: Icon(Icons.calendar_month),
-                                  hintText: 'Enter Testing Deadline',
+                                  hintText: 'Edit Testing Deadline',
                                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                                 ),
                                 onTap: () async {
@@ -456,7 +543,7 @@ class _EditPageState extends State<EditPage> {
                             child: CustomTextField(
                                 controller: testingEffortsController,
                                 suffixIcon: Icon(Icons.percent_rounded),
-                                labelText: 'Testing Efforts'),
+                                labelText: 'Edit Testing Efforts'),
                           )
                         ],
                       ),
@@ -469,7 +556,7 @@ class _EditPageState extends State<EditPage> {
                           decoration: InputDecoration(
                             focusColor: Colors.grey,
                             suffixIcon: Icon(Icons.calendar_month),
-                            hintText: 'Enter Release Date',
+                            hintText: 'Edit Release Date',
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                           ),
                           onTap: () async {
@@ -505,7 +592,7 @@ class _EditPageState extends State<EditPage> {
                         ),
                       ),
 
-                      Text('Assign People :',
+                      Text('Edit Assigned People :',
                         style: GoogleFonts.lato(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
@@ -523,10 +610,12 @@ class _EditPageState extends State<EditPage> {
                               style: ButtonStyle(
                                   backgroundColor: WidgetStatePropertyAll(Color(0xff0098FF))
                               ),
-                              onPressed: (){},
+                              onPressed: (){
+                                projectEditedSuccessfully();
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                                child: Text('Add Project',
+                                child: Text('Edit Project',
                                   style: GoogleFonts.lato(
                                       color: Colors.white,
                                       fontSize: 18,

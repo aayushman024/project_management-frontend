@@ -15,5 +15,23 @@ TextEditingController developmentDateController = TextEditingController();
 TextEditingController testingDateController = TextEditingController();
 TextEditingController releaseDateController = TextEditingController();
 
-//dailyProgress
+//dailyProgressAndUpdate
 TextEditingController dailyProgressController = TextEditingController();
+TextEditingController latestUpdateController = TextEditingController();
+
+//searchController
+TextEditingController searchController = TextEditingController();
+
+//registration
+final TextEditingController nameController = TextEditingController();
+final TextEditingController emailController = TextEditingController();
+final TextEditingController passwordController = TextEditingController();
+final TextEditingController confirmPasswordController = TextEditingController();
+final TextEditingController roleController = TextEditingController();
+final TextEditingController linkedinController = TextEditingController();
+
+//register Team
+TextEditingController teamNameController = TextEditingController();
+TextEditingController teamLeaderController = TextEditingController();
+TextEditingController teamLocationController = TextEditingController();
+TextEditingController teamDescriptionController = TextEditingController();

@@ -19,12 +19,24 @@ class _IncorrectEffortDialogState extends State<IncorrectEffortDialog> {
         fontSize: 20,
         fontWeight: FontWeight.w600
       ),),
-      content: Text('Total efforts entered exceeds 100%',
+      content: Text('Total efforts entered is not equal to 100%',
       style: GoogleFonts.lato(
         color: Colors.red,
         fontSize: 15,
         fontWeight: FontWeight.w500
       ),),
+      actions: [
+        TextButton(
+            onPressed: (){
+              Navigator.of(context).pop();
+            },
+            child: Text('Back',
+            style: GoogleFonts.lato(
+              color: Colors.red,
+              fontSize: 14,
+              fontWeight: FontWeight.w500
+            ),))
+      ],
     );
   }
 }

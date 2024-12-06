@@ -2,6 +2,7 @@
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project_management_system/pages/addProjectPage.dart';
+import 'package:project_management_system/pages/completedProjects.dart';
 import 'package:project_management_system/pages/homePage.dart';
 import 'package:project_management_system/pages/myTeamPage.dart';
 import 'package:project_management_system/pages/profilePage.dart';
@@ -49,6 +50,20 @@ class _CustomAppDrawerState extends State<CustomAppDrawer> {
                 'HOME',
                 style: GoogleFonts.poppins(color: Colors.white),
               ),
+            ),
+            ListTile(
+              hoverColor: Colors.black87,
+              leading: const Icon(
+                Icons.check_circle,
+                color: Colors.white,
+              ),
+              title: Text(
+                'COMPLETED PROJECTS',
+                style: GoogleFonts.poppins(color: Colors.white),
+              ),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> CompletedProjects()));
+              },
             ),
             ListTile(
               hoverColor: Colors.black87,

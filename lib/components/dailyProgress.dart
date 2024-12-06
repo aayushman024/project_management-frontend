@@ -11,6 +11,7 @@ class DailyProgress extends StatefulWidget {
 }
 
 class _DailyProgressState extends State<DailyProgress> {
+
   DateTime _selectedMonth = DateTime.now();
   Map<DateTime, String> _dailyProgress = {};
 
@@ -23,13 +24,13 @@ class _DailyProgressState extends State<DailyProgress> {
           (index) => DateTime(_selectedMonth.year, _selectedMonth.month, index + 1),
     );
 
-    // Filter out future dates
+    // Filtering future dates
     DateTime today = DateTime.now();
     daysInMonth = daysInMonth
         .where((date) => date.isBefore(today) || date.isAtSameMomentAs(today))
         .toList();
 
-    // Reverse the list so that the last day is at the top
+    // Reversing the list so that the last day is at the top
     daysInMonth = daysInMonth.reversed.toList();
 
     return AlertDialog(
@@ -129,6 +130,7 @@ class _DailyProgressState extends State<DailyProgress> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
         title: Text(
           "Add Progress for ${DateFormat.yMMMMd().format(day)}",
           style: GoogleFonts.lato(
@@ -151,11 +153,17 @@ class _DailyProgressState extends State<DailyProgress> {
               }
               Navigator.pop(context);
             },
-            child: const Text("Save"),
+            child: Text("Save",
+            style: GoogleFonts.lato(
+              color: Colors.blue
+            ),),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text("Cancel",
+            style: GoogleFonts.lato(
+              color: Colors.red
+            ),),
           ),
         ],
       ),

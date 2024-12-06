@@ -3,7 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:project_management_system/pages/addProjectPage.dart';
 import 'package:project_management_system/pages/homePage.dart';
+import 'package:project_management_system/pages/loginPage.dart';
+import 'package:project_management_system/pages/myTeamPage.dart';
 import 'package:project_management_system/pages/projectDetailPage.dart';
+import 'package:project_management_system/pages/registerPage.dart';
+import 'package:project_management_system/pages/registerTeam.dart';
 
 void main(){
   runApp(const PMS());
@@ -22,8 +26,12 @@ class _PMSState extends State<PMS> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: HomePage(),
+      //RegisterPage(),
+      //LoginPage()
+      //RegisterTeam()
      //ProjectDetail(),
       //AddProjectPage(),
+      //MyTeamPage(),
     );
   }
 }

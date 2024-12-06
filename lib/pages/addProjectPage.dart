@@ -2,14 +2,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:project_management_system/components/customTextField.dart';
 import 'package:project_management_system/components/selectableButtons.dart';
 import 'package:project_management_system/controllers/controllers.dart';
 import 'package:project_management_system/dialogBoxes/addFeature.dart';
 import 'package:project_management_system/dialogBoxes/incorrectEffortDialog.dart';
 import 'package:project_management_system/globals.dart';
+import 'package:project_management_system/pages/homePage.dart';
+import 'package:project_management_system/pages/myTeamPage.dart';
 
 import '../components/customAppDrawer.dart';
+import 'loginPage.dart';
 
 class AddProjectPage extends StatefulWidget {
   const AddProjectPage({super.key});
@@ -24,7 +28,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
   String? selectedLeader;
   String? selectedWeekDay;
 
-  void checkEfforts() {
+  bool checkEfforts() {
     int researchEfforts = int.tryParse(researchEffortsController.text) ?? 0;
     int designEfforts = int.tryParse(designEffortsController.text) ?? 0;
     int developmentEfforts = int.tryParse(developmentEffortsController.text) ?? 0;
@@ -32,9 +36,47 @@ class _AddProjectPageState extends State<AddProjectPage> {
 
     int totalEffortsInt = researchEfforts + designEfforts + developmentEfforts + testingEfforts;
 
-    if (totalEffortsInt > 100) {
-      showDialog(context: context, builder: (context)=> IncorrectEffortDialog());
+    if (totalEffortsInt != 100) {
+      showDialog(
+        context: context,
+        builder: (context) => IncorrectEffortDialog(),
+      );
+      return false;
     }
+    return true;
+  }
+
+  void handleProjectAddition() {
+    if (checkEfforts()) {
+      projectAddedSuccessfully();
+    }
+  }
+
+  void projectAddedSuccessfully(){
+    showDialog(context: context, builder: (context)=> AlertDialog(
+      backgroundColor: Colors.white,
+      title: Padding(
+        padding: const EdgeInsets.all(12),
+        child: SizedBox(
+          height: 80,
+          child: Lottie.asset('/completedAnimation.json',
+          width: 1,),
+        ),
+      ),
+    content:  Text('Project Added Successfully!',
+      style: GoogleFonts.lato(
+        color: Colors.black,
+        fontWeight: FontWeight.w600,
+        fontSize: 18,
+      ),),),
+    );
+    Future.delayed(
+      Duration(seconds: 2),
+          () => Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      ),
+    );
   }
 
   @override
@@ -66,14 +108,18 @@ class _AddProjectPageState extends State<AddProjectPage> {
               ),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                child: Text(
-                  'Innovation & Performance, Plot-25, GGN, IN',
-                  style: GoogleFonts.lato(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                  ),
-                ),
+                child: TextButton(
+                    onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> MyTeamPage()));
+                    },
+                    child: Text(
+                      'Innovation & Performance, Plot-25, GGN, IN',
+                      style: GoogleFonts.lato(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                    ),),
               ),
             ),
           ),
@@ -85,7 +131,9 @@ class _AddProjectPageState extends State<AddProjectPage> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginPage()));
+                },
                 icon: Icon(
                   Icons.logout_rounded,
                   size: screenHeight * 0.025,
@@ -111,9 +159,11 @@ class _AddProjectPageState extends State<AddProjectPage> {
                       CustomTextField(
                         controller: projectNameController,
                           labelText: 'Project Name'),
+
                       CustomTextField(
                         controller: aboutProjectController,
                           labelText: 'About the Project'),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -127,6 +177,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
+                                  borderRadius: BorderRadius.circular(10),
                                   focusColor: Colors.transparent,
                                   hint: Text(
                                     'Priority',
@@ -172,6 +223,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
+                                  borderRadius: BorderRadius.circular(10),
                                   focusColor: Colors.transparent,
                                   hint: Text(
                                     'Led By',
@@ -217,6 +269,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
+                                  borderRadius: BorderRadius.circular(10),
                                   focusColor: Colors.transparent,
                                   hint: Text(
                                     'Weekly Review',
@@ -306,6 +359,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                        child: CustomTextField(
                          controller: researchEffortsController,
                          suffixIcon: Icon(Icons.percent_rounded),
+                           hintText: '(0-100%)',
                            labelText: 'Research Efforts'),
                      )
                     ],
@@ -361,6 +415,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             child: CustomTextField(
                               controller: designEffortsController,
                                 suffixIcon: Icon(Icons.percent_rounded),
+                                hintText: '(0-100%)',
                                 labelText: 'Design Efforts'),
                           )
                         ],
@@ -416,6 +471,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                             child: CustomTextField(
                               controller: developmentEffortsController,
                                 suffixIcon: Icon(Icons.percent_rounded),
+                                hintText: '(0-100%)',
                                 labelText: 'Development Efforts'),
                           )
                         ],
@@ -471,6 +527,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                         child: CustomTextField(
                           controller: testingEffortsController,
                             suffixIcon: Icon(Icons.percent_rounded),
+                            hintText: '(0-100%)',
                             labelText: 'Testing Efforts'),
                       )
                     ],
@@ -539,7 +596,7 @@ class _AddProjectPageState extends State<AddProjectPage> {
                               backgroundColor: WidgetStatePropertyAll(Color(0xff0098FF))
                             ),
                               onPressed: (){
-                              checkEfforts();
+                              handleProjectAddition();
                               },
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
