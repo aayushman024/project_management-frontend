@@ -1,9 +1,11 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project_management_system/components/employeeCard.dart';
-
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:project_management_system/globals.dart';
+import 'package:project_management_system/pages/registerMemberAdmin.dart';
+import '../api/models/getUsers.dart';
 import '../components/customAppDrawer.dart';
 import 'loginPage.dart';
 
@@ -15,163 +17,272 @@ class MyTeamPage extends StatefulWidget {
 }
 
 class _MyTeamPageState extends State<MyTeamPage> {
+  late Future<List<getUsers>> _futureUsers;
+  bool _isRefreshing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureUsers = getUserDetails();
+  }
+
+  Future<List<getUsers>> getUserDetails() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.131.213.166:8080/api/individuals/'),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        return (jsonDecode(response.body) as List)
+            .map((user) => getUsers.fromJson(user))
+            .toList();
+      } else {
+        throw Exception('Failed to fetch user details (${response.statusCode})');
+      }
+    } catch (error) {
+      throw Exception('Error fetching user details: $error');
+    }
+  }
+
+  Future<void> _refreshData() async {
+    setState(() {
+      _isRefreshing = true;
+      _futureUsers = getUserDetails();
+      _isRefreshing = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-        backgroundColor: Color(0xffFDFDFD),
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.white),
-          title: Text('My Team',
-            style: GoogleFonts.lato(
-              color: Colors.white,
-              fontWeight: FontWeight.w800,
-              fontSize: 20,
-            ),),
-          backgroundColor: Color(0xff282828),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(6),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Color(0xffD9D9D9),
-                  borderRadius: BorderRadius.circular(10),
+      backgroundColor: Color(0xffF5F7FA),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.black,
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text(
+          'My Team',
+          style: GoogleFonts.lato(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 18,
+          ),
+        ),
+        actions: [
+          Flexible(
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 8),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Innovation & Performance, APAC - India',
+                style: GoogleFonts.lato(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                  child: Text(
-                    'Innovation & Performance, Plot-25, GGN, IN',
-                    style: GoogleFonts.lato(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Logout',
+            onPressed: () => Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (_) => LoginPage())),
+            icon: Icon(Icons.logout_rounded, color: Colors.white),
+          ),
+        ],
+      ),
+      drawer: CustomAppDrawer(),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: Padding(
+          padding: EdgeInsets.all(12),
+          child: Column(
+            children: [
+              if (userRole == 'Manager')
+                Padding(
+                  padding: EdgeInsets.only(bottom: 12),
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => RegisterPageAdmin())),
+                    icon: Icon(Icons.person_add, size: 16),
+                    label: Text('Add Team Member',
+                        style: GoogleFonts.lato(fontWeight: FontWeight.w500)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 15, right: 15),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Color(0xffD9D9D9),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginPage()));
+              Expanded(
+                child: FutureBuilder<List<getUsers>>(
+                  future: _futureUsers,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CircularProgressIndicator(strokeWidth: 2),
+                            SizedBox(height: 8),
+                            Text('Loading...',
+                                style: TextStyle(color: Colors.grey[600])),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.error_outline,
+                                size: 28, color: Colors.red[400]),
+                            SizedBox(height: 8),
+                            Text('Error loading team members',
+                                style: TextStyle(color: Colors.red[400])),
+                            TextButton(
+                                onPressed: _refreshData,
+                                child: Text('Try Again')),
+                          ],
+                        ),
+                      );
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                          child: Text('No team members found',
+                              style: TextStyle(color: Colors.grey[600])));
+                    }
+
+                    final users = snapshot.data!;
+                    final leads = users
+                        .where((user) =>
+                    (user.role == 'Manager' ||
+                        user.role == 'Senior Specialist') &&
+                        user.team == 'Innovation & Performance GGN')
+                        .toList();
+                    final interns = users
+                        .where((user) =>
+                    user.role == 'Intern' &&
+                        user.team == 'Innovation & Performance GGN')
+                        .toList();
+                    final otherTeamMembers = users
+                        .where((user) =>
+                    user.team != 'Innovation & Performance GGN')
+                        .toList();
+
+                    return CustomScrollView(
+                      slivers: [
+                        if (leads.isNotEmpty) ...[
+                          SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Employees',
+                                    style: GoogleFonts.lato(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87)),
+                                SizedBox(height: 8),
+                              ],
+                            ),
+                          ),
+                          SliverGrid(
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) => EmployeeCard(
+                                empName: leads[index].name ?? '',
+                                empDesig: leads[index].role ?? 'Employee',
+                                empLinkedIn: leads[index].linkedinProfile,
+                                imageUrl: 'inpTeam/${leads[index].id}.jpg',
+                              ),
+                              childCount: leads.length,
+                            ),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: _calculateCrossAxisCount(context),
+                              childAspectRatio: 2.2,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                            ),
+                          ),
+                        ],
+                        if (interns.isNotEmpty) ...[
+                          SliverGrid(
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) => EmployeeCard(
+                                empName: interns[index].name ?? '',
+                                empDesig: 'Employee',
+                                empLinkedIn: interns[index].linkedinProfile,
+                                imageUrl: 'inpTeam/${interns[index].id}.jpg',
+                              ),
+                              childCount: interns.length,
+                            ),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: _calculateCrossAxisCount(context),
+                              childAspectRatio: 2.2,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                            ),
+                          ),
+                        ],
+                        if (otherTeamMembers.isNotEmpty) ...[
+                          SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 24),
+                                Text('Other Team Members',
+                                    style: GoogleFonts.lato(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black87)),
+                                SizedBox(height: 8),
+                              ],
+                            ),
+                          ),
+                          SliverGrid(
+                            delegate: SliverChildBuilderDelegate(
+                                  (context, index) => EmployeeCard(
+                                empName: otherTeamMembers[index].name ?? '',
+                                empDesig: (otherTeamMembers[index].team) ?? 'Employee',
+                                empLinkedIn: otherTeamMembers[index].linkedinProfile,
+                              ),
+                              childCount: otherTeamMembers.length,
+                            ),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: _calculateCrossAxisCount(context),
+                              childAspectRatio: 2.2,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
                   },
-                  icon: Icon(
-                    Icons.logout_rounded,
-                    size: screenHeight * 0.025,
-                    color: Colors.black,
-                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        drawer: CustomAppDrawer(),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      EmployeeCard(
-                        empColor: Color(0xff203351),
-                          empName: 'Shiv Sahu',
-                          empDesig: 'ON Care Innovation and Performance Lead',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xff203351),
-                        empName: 'Niraj Garg',
-                        empDesig: 'ON Care Innovation and Performance Expert',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xff203351),
-                        empName: 'Siddharth Dinodia',
-                        empDesig: 'ON Care Innovation and Performance Expert',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xff203351),
-                        empName: 'Anil Prajapati',
-                        empDesig: 'Automation Expert',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xff203351),
-                        empName: 'Tony Ravindran',
-                        empDesig: 'ON Care Innovation and Performance Expert',
-                      ),
-                      SizedBox(height: screenHeight*0.6,)
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      EmployeeCard(
-                        empColor: Color(0xffDFECFF),
-                        empName: 'Aayushman Ranjan',
-                        empTextColor: Colors.black,
-                        empDesig: 'Mobile App Developer Intern',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xffDFECFF),
-                        empName: 'Rishabh Sharma',
-                        empTextColor: Colors.black,
-                        empDesig: 'Mobile App Developer Intern',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xffDFECFF),
-                        empName: 'Kashish Mittal',
-                        empTextColor: Colors.black,
-                        empDesig: 'Backend Developer Intern',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xffDFECFF),
-                        empName: 'Tejasvita Jaini',
-                        empTextColor: Colors.black,
-                        empDesig: 'Backend Developer Intern',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xffDFECFF),
-                        empName: 'Khushi Sharma',
-                        empTextColor: Colors.black,
-                        empDesig: 'Automation Intern',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xffDFECFF),
-                        empName: 'Yuvraj S. Tanwar',
-                        empTextColor: Colors.black,
-                        empDesig: 'Backend Developer Intern',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xffDFECFF),
-                        empName: 'Vansh Chaudhary',
-                        empTextColor: Colors.black,
-                        empDesig: 'Frontend Developer Intern',
-                      ),
-                      EmployeeCard(
-                        empColor: Color(0xffDFECFF),
-                        empName: 'Reya Kumar',
-                        empTextColor: Colors.black,
-                        empDesig: 'Frontend Developer',
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
+            ],
           ),
-        )
+        ),
+      ),
     );
+  }
+
+  int _calculateCrossAxisCount(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    if (width > 1200) return 4;
+    if (width > 800) return 3;
+    if (width > 600) return 2;
+    return 1;
   }
 }

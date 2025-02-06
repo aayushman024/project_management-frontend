@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.5.3
+  sdk: ^3.2.4
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -46,6 +46,13 @@ dependencies:
   awesome_snackbar_content: ^0.1.4
   auto_animated: ^3.2.0
   http: ^1.2.2
+  shared_preferences: ^2.3.3
+  shared_preferences_web: ^2.4.2
+  url_launcher: ^6.3.1
+  data_table_2: ^2.5.15
+  excel: ^4.0.6
+  path_provider: ^2.1.5
+  open_file: ^3.5.10
 
 
 
@@ -87,11 +94,13 @@ assets:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+   fonts:
+     - family: NokiaPureHeadline
+       fonts:
+         - asset: fonts/NokiaPureHeadline_Bd.ttf
+         - asset: fonts/NokiaPureHeadline_Rg.ttf
+         - asset: fonts/NokiaPureHeadline_Lt.ttf
+         - asset: fonts/NokiaPureHeadline_ULt.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

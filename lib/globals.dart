@@ -1,29 +1,39 @@
 // List of project names
+import 'package:intl/intl.dart';
+
 final List<String> projectNames = ['TS Hot Issues Dashboard', 'sTSI - Simplified Technical Support Interface v2.0', 'NMS Care', 'Technical Support Bot', 'NI Care Assist', ];
 
-//percentage
-double percentage = 0.72;
+
+//globalDetails
+String userName = '';
+String? userRole;
+int? userId;
 
 List <String> priority = ['High', 'Medium', 'Low'];
 
-List <String> milestones = ['Research Completed', 'Design Completed', 'Development Completed', 'Testing Completed', 'Released'];
+List <String> milestones = ['Null', 'Research', 'Design', 'Development', 'Testing', 'Released'];
 
-List <String> inpTeam = ['Shiv Sahu', 'Anil Prajapati', 'Siddharth Dinodiya', 'Niraj Garg', 'Tony Ravindran'];
+List <String> inpTeam = ['Shiv', 'Anil', 'Siddharth', 'Niraj', 'Tony'];
+
+String? selectedPriority;
+String? selectedLeader;
+String? selectedWeekDay;
+String? currentMilestone;
 
 List<String> names = [
-  'Aayushman',
-  'Rishabh',
-  'Yuvraj',
-  'Khushi',
-  'Vansh',
-  'Kashish',
-  'Reya',
-  'Tejasvita',
-  'Anil K.',
+  'Aayushman Ranjan',
+  'Rishabh Sharma',
+  'Yuvraj Singh Tanwar',
+  'Khushi Sharma',
+  'Vansh Chaudhary',
+  'Kashish Mittal',
+  'Reya Kumar',
+  'Tejasvita Jain',
+  'Anil Prajapati',
   'Niraj Garg',
   'Tony Ravindran',
   'Shiv Sahu',
-  'Siddharth'
+  'Siddharth Dinodia'
 ];
 List<String> selectedNames = [];
 
@@ -35,5 +45,20 @@ bool isMedium = false;
 bool isLow = false;
 
 //teamsOnPMS
+List <String> teams = ['Innovation & Performance GGN', 'Other'];
+//positionsOnPMS
+List <String> positions = ['Manager', 'Senior Specialist', 'Intern'];
 
-List <String> teams = ['Innovation & Performance GGN', 'GTAC GGN', 'Classic PSS'];
+//format date
+String formatDate(String? dateTime) {
+  if (dateTime == null || dateTime.isEmpty) {
+    return "N/A";
+  }
+  try {
+    DateTime utcDate = DateTime.parse(dateTime).toLocal();
+    return DateFormat('dd/MM/yyyy').format(utcDate);
+  } catch (e) {
+    print('Error parsing date: $e');
+    return "Invalid Date";
+  }
+}

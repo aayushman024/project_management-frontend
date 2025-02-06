@@ -33,13 +33,13 @@ class _RegisterTeamState extends State<RegisterTeam> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
 
-                  SizedBox(height: screenWidth*0.05,),
+                  SizedBox(height: screenWidth*0.03,),
 
-                  SizedBox(height: screenHeight * 0.04, child: Image.asset('/nokiaLogo.png',
+                  SizedBox(height: screenHeight * 0.03, child: Image.asset('/nokiaLogo.png',
                       color: Color(0xff005AFF))),
 
                   Padding(
-                    padding: const EdgeInsets.only(top: 80),
+                    padding: const EdgeInsets.only(top: 50),
                     child: Text(
                       'Register Your Team for Project Management System',
                       style: GoogleFonts.lato(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 20),
@@ -47,9 +47,9 @@ class _RegisterTeamState extends State<RegisterTeam> {
                   ),
 
                   Container(
-                    margin: EdgeInsets.only(top: 30),
+                    margin: EdgeInsets.only(top: 20),
                     padding: EdgeInsets.only(top: 40, left: 50, right: 50),
-                    height: screenHeight * 0.6,
+                    height: screenHeight * 0.68,
                     width: screenWidth * 0.4,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
@@ -68,13 +68,14 @@ class _RegisterTeamState extends State<RegisterTeam> {
 
                         Expanded(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomTextField(
                                   labelText: 'Team Name',
                                   obscureText: false,
-                                  controller: teamNameController),
+                                  controller: teamNameController,
+                              ),
 
                               CustomTextField(
                                 labelText: 'Team Manager',
@@ -94,7 +95,7 @@ class _RegisterTeamState extends State<RegisterTeam> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom: 30),
+                          padding: const EdgeInsets.only(bottom: 20),
                           child: ElevatedButton(
                             onPressed: (){},
                             style: ButtonStyle(
@@ -138,7 +139,7 @@ class _RegisterTeamState extends State<RegisterTeam> {
 
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(top: 20, bottom: 15),
+                      padding: const EdgeInsets.only(top: 10, bottom: 20),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -146,7 +147,7 @@ class _RegisterTeamState extends State<RegisterTeam> {
                           const Text(
                             'Don\'t have an account?',
                             style: TextStyle(
-                              fontSize: 16.0,
+                              fontSize: 14.0,
                               color: Colors.black,
                             ),
                           ),
@@ -158,7 +159,7 @@ class _RegisterTeamState extends State<RegisterTeam> {
                             child: const Text(
                               'Register',
                               style: TextStyle(
-                                fontSize: 16.0,
+                                fontSize: 14.0,
                                 color: Colors.blue,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -179,7 +180,7 @@ class _RegisterTeamState extends State<RegisterTeam> {
                             child: const Text(
                               'Login Here',
                               style: TextStyle(
-                                fontSize: 16.0,
+                                fontSize: 14.0,
                                 color: Colors.black,
                               ),
                             ),

@@ -2,7 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AboutProject extends StatefulWidget {
-  const AboutProject({super.key});
+
+  final about;
+  final peopleAssigned;
+  final priority;
+  final assignedBy;
+  final ledBy;
+  final dateAssigned;
+
+  AboutProject({
+    required this.ledBy,
+    required this.priority,
+    required this.dateAssigned,
+    required this.assignedBy,
+    required this.about,
+    required this.peopleAssigned,
+});
 
   @override
   State<AboutProject> createState() => _AboutProjectState();
@@ -12,7 +27,7 @@ class _AboutProjectState extends State<AboutProject> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 90),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 90),
         child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -28,7 +43,7 @@ class _AboutProjectState extends State<AboutProject> {
         Padding(
           padding: const EdgeInsets.only(top: 25, bottom: 25),
           child: Text(
-            'sTSI or Simplified Technical Support Interface is a network automation tool which enables technical support engineers to remotely perform log collection & health check. Furthermore, it acts as an information repository comprising of plans of action & troubleshooting guides for network alarms with compilation of knowledge base articles & optical specifications. With features like logs parsing & network alarms analysis, sTSI improves the TSE\'s performance with its innovative approach.',
+            widget.about,
             style: GoogleFonts.lato(
               fontSize: 16,
               color: Colors.black87,
@@ -49,7 +64,7 @@ class _AboutProjectState extends State<AboutProject> {
                 ),
               ),
               TextSpan(
-                text: 'Rishabh Sharma, Reya Kumar, Vansh Chaudhary, Kashish Mittal',
+                text: widget.peopleAssigned,
                 style: GoogleFonts.lato(
                   fontSize: 16,
                   color: Colors.black87,
@@ -73,7 +88,7 @@ class _AboutProjectState extends State<AboutProject> {
                   ),
                 ),
                 TextSpan(
-                  text: 'Nitesh Verma',
+                  text: widget.assignedBy,
                   style: GoogleFonts.lato(
                     fontSize: 16,
                     color: Colors.black87,
@@ -96,7 +111,7 @@ class _AboutProjectState extends State<AboutProject> {
                 ),
               ),
               TextSpan(
-                text: 'Medium',
+                text: widget.priority,
                 style: GoogleFonts.lato(
                   fontSize: 16,
                   color: Colors.black87,
@@ -120,7 +135,7 @@ class _AboutProjectState extends State<AboutProject> {
                   ),
                 ),
                 TextSpan(
-                  text: '10/10/2024',
+                  text: widget.dateAssigned,
                   style: GoogleFonts.lato(
                     fontSize: 16,
                     color: Colors.black87,
@@ -143,7 +158,7 @@ class _AboutProjectState extends State<AboutProject> {
                 ),
               ),
               TextSpan(
-                text: 'Anil Kr. Prajapati',
+                text: widget.ledBy,
                 style: GoogleFonts.lato(
                   fontSize: 16,
                   color: Colors.black87,

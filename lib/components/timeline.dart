@@ -1,14 +1,26 @@
-// ignore_for_file: prefer_const_constructors
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:project_management_system/fontStyle.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
-import '../globals.dart';
-
 class CustomTimeline extends StatefulWidget {
-  const CustomTimeline({super.key});
+  final String currentMilestone;
+  final String researchDeadline;
+  final String designDeadline;
+  final String developmentDeadline;
+  final String testingDeadline;
+  final String releaseDeadline;
+
+  CustomTimeline({
+    required this.currentMilestone,
+    required this.researchDeadline,
+    required this.designDeadline,
+    required this.developmentDeadline,
+    required this.testingDeadline,
+    required this.releaseDeadline,
+  });
 
   @override
   State<CustomTimeline> createState() => _CustomTimelineState();
@@ -17,12 +29,24 @@ class CustomTimeline extends StatefulWidget {
 class _CustomTimelineState extends State<CustomTimeline> {
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
+    final milestones = ["Research", "Design", "Development", "Testing", "Release"];
+
+    Color getColor(String milestone) {
+      final currentIndex = milestones.indexOf(widget.currentMilestone);
+      final milestoneIndex = milestones.indexOf(milestone);
+      if (widget.currentMilestone == "Released") {
+        return Colors.green;
+      }
+
+      return milestoneIndex <= currentIndex ? Colors.green : Colors.blue;
+    }
+
+
     return SizedBox(
-      height: screenHeight*0.2,
+      height: screenHeight * 0.2,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -30,124 +54,113 @@ class _CustomTimelineState extends State<CustomTimeline> {
             child: TimelineTile(
               startChild: Padding(
                 padding: const EdgeInsets.only(top: 5),
-                child: Text('Research\n(12/11/24)',
+                child: Text(
+                  'Research\n(${widget.researchDeadline})',
                   textAlign: TextAlign.center,
-                style: GoogleFonts.lato(
-                  color: Colors.black54,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400
-                ),),
+                  style:AppTextStyles.regular(fontSize: 12, color: Colors.black54)
+                ),
               ),
               axis: TimelineAxis.horizontal,
               alignment: TimelineAlign.center,
               isFirst: true,
               indicatorStyle: IndicatorStyle(
-                color: Colors.green,
+                color: getColor("Research"),
                 iconStyle: IconStyle(
                   iconData: Icons.check,
                   color: Colors.white,
                 ),
               ),
-              beforeLineStyle: LineStyle(color: Colors.green),
+              beforeLineStyle: LineStyle(color: getColor("Research")),
             ),
           ),
           Flexible(
             child: TimelineTile(
               endChild: Padding(
                 padding: const EdgeInsets.only(top: 5),
-                child: Text('Design\n(26/11/24)',
+                child: Text(
+                  'Design\n(${widget.designDeadline})',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                      color: Colors.black54,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400
-                  ),),
+                  style: AppTextStyles.regular(fontSize: 12, color: Colors.black54)
+                ),
               ),
               axis: TimelineAxis.horizontal,
               alignment: TimelineAlign.center,
-              isLast: false,
               indicatorStyle: IndicatorStyle(
-                color: Colors.green,
+                color: getColor("Design"),
                 iconStyle: IconStyle(
                   iconData: Icons.done,
                   color: Colors.white,
                 ),
               ),
-              beforeLineStyle: LineStyle(color: Colors.green),
+              beforeLineStyle: LineStyle(color: getColor("Design")),
             ),
           ),
           Flexible(
             child: TimelineTile(
               startChild: Padding(
                 padding: const EdgeInsets.only(top: 5),
-                child: Text('Development\n(02/01/25)',
+                child: Text(
+                  'Development\n(${widget.developmentDeadline})',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                      color: Colors.black54,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400
-                  ),),
+                  style: AppTextStyles.regular(fontSize: 12, color: Colors.black54
+                  ),
+                ),
               ),
               axis: TimelineAxis.horizontal,
               alignment: TimelineAlign.center,
-              isLast: false,
               indicatorStyle: IndicatorStyle(
-                color: Colors.blue,
+                color: getColor("Development"),
                 iconStyle: IconStyle(
                   iconData: Icons.done,
                   color: Colors.white,
                 ),
               ),
-              beforeLineStyle: LineStyle(color: Colors.blue),
+              beforeLineStyle: LineStyle(color: getColor("Development")),
             ),
           ),
           Flexible(
             child: TimelineTile(
               endChild: Padding(
                 padding: const EdgeInsets.only(top: 5),
-                child: Text('Testing\n(26/01/25)',
+                child: Text(
+                  'Testing\n(${widget.testingDeadline})',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                      color: Colors.black54,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400
-                  ),),
+                  style: AppTextStyles.regular(fontSize: 12, color: Colors.black54)
+                ),
               ),
               axis: TimelineAxis.horizontal,
               alignment: TimelineAlign.center,
-              isLast: false,
               indicatorStyle: IndicatorStyle(
-                color: Colors.blue,
+                color: getColor("Testing"),
                 iconStyle: IconStyle(
                   iconData: Icons.done,
                   color: Colors.white,
                 ),
               ),
-              beforeLineStyle: LineStyle(color: Colors.blue),
-            ),),
+              beforeLineStyle: LineStyle(color: getColor("Testing")),
+            ),
+          ),
           Flexible(
             child: TimelineTile(
               startChild: Padding(
                 padding: const EdgeInsets.only(top: 0),
-                child: Text('Release\n(01/02/25)',
+                child: Text(
+                  'Release\n(${widget.releaseDeadline})',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.lato(
-                      color: Colors.black54,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400
-                  ),),
+                  style: AppTextStyles.regular(fontSize: 12, color: Colors.black54)
+                ),
               ),
               axis: TimelineAxis.horizontal,
               alignment: TimelineAlign.center,
               isLast: true,
               indicatorStyle: IndicatorStyle(
-                color: Colors.blue,
+                color: getColor("Release"),
                 iconStyle: IconStyle(
                   iconData: Icons.done,
                   color: Colors.white,
                 ),
               ),
-              beforeLineStyle: LineStyle(color: Colors.blue),
+              beforeLineStyle: LineStyle(color: getColor("Release")),
             ),
           ),
         ],

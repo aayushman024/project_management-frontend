@@ -1,8 +1,9 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:project_management_system/pages/projectDetailPage.dart';
+import '../api/apis.dart';
+import '../api/models/getAllProjects.dart';
+import '../components/completedProjectCard.dart';
 import '../components/customAppDrawer.dart';
 import '../components/projectCard.dart';
 import '../controllers/controllers.dart';
@@ -24,8 +25,8 @@ class _CompletedProjectsState extends State<CompletedProjects> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-        backgroundColor: Color(0xffFDFDFD),
-        appBar: AppBar(
+      backgroundColor: Color(0xffFDFDFD),
+      appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.white),
           title: Text(
             'Project Management System',
@@ -40,26 +41,25 @@ class _CompletedProjectsState extends State<CompletedProjects> {
             Padding(
               padding: const EdgeInsets.all(6),
               child: Container(
-                decoration: BoxDecoration(
-                  color: Color(0xffD9D9D9),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => MyTeamPage()));
-                      },
-                      child: Text(
-                        'Innovation & Performance, Plot-25, GGN, IN',
-                        style: GoogleFonts.lato(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
+                  decoration: BoxDecoration(
+                    color: Color(0xffD9D9D9),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => MyTeamPage()));
+                        },
+                        child: Text(
+                          'Innovation & Performance, Plot-25, GGN, IN',
+                          style: GoogleFonts.lato(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                    )),
-              ),
+                      ))),
             ),
             Padding(
               padding: const EdgeInsets.only(left: 15, right: 15),
@@ -70,7 +70,7 @@ class _CompletedProjectsState extends State<CompletedProjects> {
                 ),
                 child: IconButton(
                   onPressed: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> LoginPage()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
                   },
                   icon: Icon(
                     Icons.logout_rounded,
@@ -79,163 +79,120 @@ class _CompletedProjectsState extends State<CompletedProjects> {
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        drawer: CustomAppDrawer(),
-        body: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(40, 30, 40, 30),
-            child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.start, children: [
-              // Parent column for projects
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: Divider(
-                            color: Colors.black,
-                            thickness: 1,
-                            endIndent: 10,
-                          ),
-                        ),
-                        Text(
-                          'COMPLETED PROJECTS      ',
-                          style: GoogleFonts.lato(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: screenHeight * 0.04),
-                    ExpansionTile(
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            '   Filters    ',
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+            )
+          ]),
+      drawer: CustomAppDrawer(),
+      body: SingleChildScrollView(
+        child: FutureBuilder<List<GetAllProjects>>(
+          future: fetchAllProjects(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(color: Colors.blue),
+              );
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Error fetching projects: ${snapshot.error}',
+                  style: TextStyle(color: Colors.red),
+                ),
+              );
+            }
+
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              final List<GetAllProjects> projects = snapshot.data!;
+              final filteredProjects = projects.where((project) {
+                final nameMatch = project.projectName?.toLowerCase().contains(searchController.text.toLowerCase()) ?? false;
+                final priorityMatch = (isHigh && project.priority == 'High') || (isMedium && project.priority == 'Medium') || (isLow && project.priority == 'Low');
+                final isCompleted = project.completed == true;
+
+                return nameMatch && (priorityMatch || !(isHigh || isMedium || isLow)) && isCompleted;
+              }).toList();
+
+              return GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: 1.18,
+                ),
+                itemCount: filteredProjects.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  final project = filteredProjects[index];
+
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 10, left: 50, right: 50, bottom: 50),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProjectDetail(
+                              projects: project,
+                              completionPercentage: calculateCompletionPercentage(project),
+                              currentMilestone: project.currentMilestone!,
                             ),
-                          ),
-                          Icon(
-                            Icons.filter_list,
-                            color: Colors.black,
-                            size: screenHeight * 0.024,
-                          ),
-                        ],
-                      ),
-                      collapsedIconColor: Colors.black,
-                      iconColor: Colors.black,
-                      backgroundColor: Color(0xffD9D9D9),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      childrenPadding: EdgeInsets.all(10),
-                      children: [
-                        CheckboxListTile(
-                          dense: true,
-                          activeColor: Colors.black,
-                          checkColor: Colors.white,
-                          checkboxShape: CircleBorder(),
-                          title: Text(
-                            'High',
-                            style: GoogleFonts.poppins(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500),
-                          ),
-                          value: isHigh,
-                          onChanged: (value) {
-                            setState(() {
-                              isHigh = value ?? false;
-                            });
-                          },
-                        ),
-                        CheckboxListTile(
-                          dense: true,
-                          activeColor: Colors.black,
-                          checkColor: Colors.white,
-                          checkboxShape: CircleBorder(),
-                          title: Text(
-                            'Medium',
-                            style: GoogleFonts.poppins(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500),
-                          ),
-                          value: isMedium,
-                          onChanged: (value) {
-                            setState(() {
-                              isMedium = value ?? false;
-                            });
-                          },
-                        ),
-                        CheckboxListTile(
-                          dense: true,
-                          activeColor: Colors.black,
-                          checkColor: Colors.white,
-                          checkboxShape: CircleBorder(),
-                          title: Text(
-                            'Low',
-                            style: GoogleFonts.poppins(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w500),
-                          ),
-                          value: isLow,
-                          onChanged: (value) {
-                            setState(() {
-                              isLow = value ?? false;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 30, left: 16, right: 16),
-                      child: TextField(
-                          // onChanged: (value) {
-                          //   filterIssues(value);
-                          // },
-                          cursorColor: Colors.white30,
-                          controller: searchController,
-                          maxLines: null,
-                          autofocus: false,
-                          keyboardType: TextInputType.name,
-                          style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.w500),
-                          decoration: InputDecoration(
-                            suffixIcon: Icon(
-                              Icons.search_rounded,
-                              color: Colors.white54,
-                            ),
-                            filled: true,
-                            fillColor: Colors.white,
-                            focusColor: Colors.black,
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                            hintText: '   Search Completed Projects',
-                            hintStyle:
-                                GoogleFonts.poppins(color: Colors.black54, fontSize: 14, fontWeight: FontWeight.w400, fontStyle: FontStyle.italic),
-                          )),
-                    ),
-                    SizedBox(height: 10),
-                    ListView.builder(
-                      itemCount: projectNames.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: ProjectCard(
-                            projectName: projectNames[index],
                           ),
                         );
                       },
+                      child: CompletedProjectCard(
+                        onTap: () {},
+                        daysLeft: '0',
+                        lastUpdated: project.lastUpdate,
+                        projectName: project.projectName,
+                        description: project.description,
+                        priority: project.priority,
+                        ledBy: project.ledBy,
+                        review: project.review,
+                        researchDeadline: project.researchDeadline,
+                        researchEffort: project.researchEffort,
+                        designDeadline: project.designDeadline,
+                        designEffort: project.designEffort,
+                        developmentDeadline: project.developmentDeadline,
+                        developmentEffort: project.developmentEffort,
+                        testingDeadline: project.testingDeadline,
+                        testingEffort: project.testingEffort,
+                        assignedBy: project.assignedBy,
+                        assignedTo: project.assignedTo,
+                        currentMilestone: project.currentMilestone,
+                        completionPercentage: calculateCompletionPercentage(project),
+                        releaseDate: project.releaseDate,
+                      ),
                     ),
-                  ],
-                ),
+                  );
+                },
+              );
+            }
+
+            return Center(
+              child: Text(
+                'No completed projects available',
+                style: TextStyle(fontSize: 16),
               ),
-              SizedBox(
-                width: screenWidth*0.45,
-              )
-            ]
-            )
-        ));
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  double calculateCompletionPercentage(GetAllProjects project) {
+    final efforts = {
+      "Research": project.researchEffort,
+      "Design": project.designEffort,
+      "Development": project.developmentEffort,
+      "Testing": project.testingEffort,
+    };
+
+    double totalPercentage = 0.0;
+    for (var milestone in efforts.keys) {
+      totalPercentage += double.tryParse(efforts[milestone]?.replaceAll('%', '') ?? '0') ?? 0.0;
+      if (milestone == project.currentMilestone) break;
+    }
+    return totalPercentage;
   }
 }

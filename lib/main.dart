@@ -1,15 +1,13 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:project_management_system/pages/addProjectPage.dart';
 import 'package:project_management_system/pages/homePage.dart';
 import 'package:project_management_system/pages/loginPage.dart';
 import 'package:project_management_system/pages/myTeamPage.dart';
-import 'package:project_management_system/pages/projectDetailPage.dart';
-import 'package:project_management_system/pages/registerPage.dart';
-import 'package:project_management_system/pages/registerTeam.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main(){
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const PMS());
 }
 
@@ -21,17 +19,29 @@ class PMS extends StatefulWidget {
 }
 
 class _PMSState extends State<PMS> {
+  bool _isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    setState(() {
+      _isLoggedIn = isLoggedIn;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
-      //RegisterPage(),
-      //LoginPage()
-      //RegisterTeam()
-     //ProjectDetail(),
-      //AddProjectPage(),
-      //MyTeamPage(),
+      home: _isLoggedIn ? HomePage() : LoginPage(),
+      //MyTeamPage()
     );
   }
 }
